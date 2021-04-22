@@ -1,35 +1,36 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {Questions}  from '../data'
 import { useGlobalContext } from '../context'
 
 const Quiz=()=> {
 	const [currentQuestion, setCurrentQuestion] = useState(0);
-	const [optionChosen, setOptionChosen] = useState('');
 	const { score, setScore, gameState, setGameState } = useGlobalContext();
 
 	const nextQuestion=()=>{
-		if(Questions[currentQuestion].answer == optionChosen){
-			setScore(score +1)
-		}
 		setCurrentQuestion(currentQuestion+1)
 	}
 
 	const finishQuiz =()=>{
-		if(Questions[currentQuestion].answer == optionChosen){
-			setScore(score +1)
-		}
 		setGameState("endscreen")
 	}
+
+	const correctAnswer=(isCorrect)=>{
+		if(isCorrect){
+			setScore(score +1)
+		}
+	}
+
         return (
             <div className="quiz">
                 <h1>{Questions[currentQuestion].promt}</h1>
-                <div className="options">
-                <button onClick={()=> setOptionChosen('A')}>{Questions[currentQuestion].optionA}</button>
-                <button onClick={()=> setOptionChosen('B')}>{Questions[currentQuestion].optionB}</button>
-                <button onClick={()=> setOptionChosen('C')}>{Questions[currentQuestion].optionC}</button>
-                <button onClick={()=> setOptionChosen('D')}>{Questions[currentQuestion].optionD}</button>
+                <div className='options'>
+                	{Questions[currentQuestion].answerOptions.map((answerOption, index) => (
+							<button key={index++} onClick={() => correctAnswer(answerOption.isCorrect)}
+							>{answerOption.optionText}</button>
+						))}
                 </div>
-                {currentQuestion== Questions.length -1 ? (
+               
+                {currentQuestion=== Questions.length -1 ? (
                 	<button onClick={finishQuiz}>Finish Quiz</button> 
                 	) :  
                 	(<button onClick={nextQuestion}>Next Question</button>
